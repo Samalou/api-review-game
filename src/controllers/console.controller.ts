@@ -2,6 +2,8 @@ import { Controller, Get, Post, Delete, Route, Path, Body, Tags, Patch } from "t
 import { consoleService } from "../services/console.service";
 import { ConsoleDTO } from "../dto/console.dto";
 
+import { notFound } from "../error/NotFoundError";
+
 @Route("consoles")
 @Tags("Consoles")
 export class ConsoleController extends Controller {
@@ -14,8 +16,16 @@ export class ConsoleController extends Controller {
   // Récupère une console par ID
   @Get("{id}")
   public async getConsoleById(@Path() id: number): Promise<ConsoleDTO | null> {
-    return consoleService.getConsoleById(id);
+    const request = await consoleService.getConsoleById(id);
+    if(!request){
+      return notFound("Console");
+    }
+    return request;
   }
+
+  
+  
+  
 
   // Crée une nouvelle console
   @Post("/")
@@ -23,9 +33,8 @@ export class ConsoleController extends Controller {
     @Body() requestBody: ConsoleDTO
   ): Promise<ConsoleDTO> {
     const { name, manufacturer } = requestBody;
-    if(!name || !manufacturer){
-      this.setStatus(400); 
-      throw new Error("pas le bon format");
+    if (!name || !manufacturer) {
+      return notFound("Nom ou fabricant");
     }
 
     this.setStatus(201);
@@ -46,6 +55,10 @@ export class ConsoleController extends Controller {
     @Body() requestBody: ConsoleDTO
   ): Promise<ConsoleDTO | null> {
     const { name, manufacturer } = requestBody;
+    const request = await consoleService.getConsoleById(id);
+    if(!request){
+      return notFound("Console");
+    }
     return consoleService.updateConsole(id, name, manufacturer);
   }
 }
