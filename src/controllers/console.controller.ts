@@ -23,8 +23,15 @@ export class ConsoleController extends Controller {
     @Body() requestBody: ConsoleDTO
   ): Promise<ConsoleDTO> {
     const { name, manufacturer } = requestBody;
+    if(!name || !manufacturer){
+      this.setStatus(400); 
+      throw new Error("pas le bon format");
+    }
+
+    this.setStatus(201);
     return consoleService.createConsole(name, manufacturer);
   }
+  
 
   // Supprime une console par ID
   @Delete("{id}")
