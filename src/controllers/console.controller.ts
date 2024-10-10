@@ -7,11 +7,14 @@ import { notFound } from "../error/NotFoundError";
 @Route("consoles")
 @Tags("Consoles")
 export class ConsoleController extends Controller {
+
+
   // Récupère toutes les consoles
   @Get("/")
   public async getAllConsole(): Promise<ConsoleDTO[]> {
     return consoleService.getAllConsoles();
   }
+  
 
   // Récupère une console par ID
   @Get("{id}")
